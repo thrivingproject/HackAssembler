@@ -11,12 +11,13 @@ from parser import Parser
 import coder
 
 asm_path = sys.argv[1]
-path_root, _ = path.splitext(asm_path)
-hack_path = path_root + ".hack"
+path_root, ext = path.splitext(asm_path)
+if ext != ".asm":
+    raise ValueError("Input file must have .asm extension")
 
 parser = Parser(asm_path)
 
-with open(hack_path, "w", encoding="utf-8") as f:
+with open(path_root + ".hack", "w", encoding="utf-8") as f:
     while parser.has_more_lines():
         parser.advance()
         line = ""
