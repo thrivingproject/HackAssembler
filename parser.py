@@ -49,7 +49,13 @@ class Parser:
 
     def symbol(self) -> str:
         """Returns symbol for L-Instructions and A-Instructions"""
-        return self._current_instruction[1:]
+        match self.instructionType():
+            case self.InstructionType.A_INSTRUCTION:
+                return self._current_instruction[1:]
+            case self.InstructionType.L_INSTRUCTION:
+                return self._current_instruction[1:-1]
+            case _:
+                raise ValueError("symbol() called on C-Instruction")
 
     def dest(self) -> str:
         """Returns the symbolic _dest_ part of the current C-Instruction"""

@@ -8,6 +8,7 @@ import sys
 from os import path
 from parser import Parser
 import coder
+from symbol_table import SymbolTable
 
 asm_path = sys.argv[1]
 path_root, ext = path.splitext(asm_path)
@@ -15,6 +16,26 @@ path_root, ext = path.splitext(asm_path)
 if ext != ".asm":
     raise ValueError("Input file must have .asm extension")
 
+# First pass needed to build symbol table
+parser = Parser(asm_path)
+sym_table = SymbolTable()
+line_no = 0
+while parser.has_more_lines():
+    parser.advance()
+    i_type = parser.instructionType()
+    # Needed so we only add to line no for C and A instructions
+    if i_type != Parser.InstructionType.L_INSTRUCTION:
+        line_no += 1
+    else:
+        symbol = parser.symbol()
+        # Label symbols can't only be declared more than once
+        if sym_table.contains(symbol):
+            raise ValueError(f"Symbol {symbol} defined multiple times")
+        else:
+            # Add 1 to get ROM address of next instruction
+            sym_table.add_entry(symbol, line_no + 1)
+
+# Second pass needed to handle variable symbols and generate binary
 with open(path_root + ".hack", "w", encoding="utf-8") as f:
     parser = Parser(asm_path)
     while parser.has_more_lines():
@@ -34,7 +55,8 @@ with open(path_root + ".hack", "w", encoding="utf-8") as f:
                     + coder.dest(parser.dest())
                     + coder.jump(parser.jump())
                 )
-            case Parser.InstructionType.L_INSTRUCTION:
-                pass
+            # Skip L-Instructions
+            case _:
+                continue
 
         f.write(line + "\n" if parser.has_more_lines() else line)
