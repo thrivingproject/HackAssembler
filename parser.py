@@ -40,7 +40,9 @@ class Parser:
         """Return the type of currently selected instruction"""
         if self._current_instruction.startswith("@"):
             return self.InstructionType.A_INSTRUCTION
-        elif self._current_instruction.startswith("("):
+        elif self._current_instruction.startswith(
+            "("
+        ) and self._current_instruction.endswith(")"):
             return self.InstructionType.L_INSTRUCTION
         else:
             return self.InstructionType.C_INSTRUCTION

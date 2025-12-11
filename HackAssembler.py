@@ -34,5 +34,7 @@ with open(path_root + ".hack", "w", encoding="utf-8") as f:
                     + coder.dest(parser.dest())
                     + coder.jump(parser.jump())
                 )
+            case Parser.InstructionType.L_INSTRUCTION:
+                pass
 
         f.write(line + "\n" if parser.has_more_lines() else line)
