@@ -24,18 +24,17 @@ sym_table = SymbolTable()
 line_no = -1
 while parser.has_more_lines():
     parser.advance()
-    i_type = parser.instructionType()
+    instruction_type = parser.instructionType()
     # Needed so we only add to line no for C and A instructions
-    if i_type != Parser.InstructionType.L_INSTRUCTION:
+    if instruction_type is not Parser.InstructionType.L_INSTRUCTION:
         line_no += 1
     else:
-        symbol = parser.symbol()
-        # Label symbols can't only be declared more than once
-        if sym_table.contains(symbol):
-            raise ValueError(f"Symbol {symbol} defined multiple times")
+        label_symbol = parser.symbol()
+        if sym_table.contains(label_symbol):
+            raise ValueError(f"Symbol {label_symbol} defined multiple times")
         else:
             # Add 1 to get ROM address of next instruction
-            sym_table.add_entry(symbol, line_no + 1)
+            sym_table.add_entry(label_symbol, line_no + 1)
 
 
 # Second pass needed to handle variable symbols and generate binary
@@ -47,16 +46,16 @@ with open(path_root + ".hack", "w", encoding="utf-8") as f:
         line = ""
         match parser.instructionType():
             case Parser.InstructionType.A_INSTRUCTION:
-                symbol = parser.symbol()
+                label_symbol = parser.symbol()
                 # Replace symbolic reference with address
-                if not symbol.isdecimal():
-                    if not sym_table.contains(symbol):
-                        sym_table.add_entry(symbol, address)
+                if not label_symbol.isdecimal():
+                    if not sym_table.contains(label_symbol):
+                        sym_table.add_entry(label_symbol, address)
                         address += 1
-                    symbol = sym_table.get_address(symbol)
+                    label_symbol = sym_table.get_address(label_symbol)
 
                 # Translate to binary, cut off '0b', pad with zeros
-                decimal = int(symbol)
+                decimal = int(label_symbol)
                 line = bin(decimal)[2:].zfill(16)
             case Parser.InstructionType.C_INSTRUCTION:
                 line += (
