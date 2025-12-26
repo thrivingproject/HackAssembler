@@ -37,7 +37,12 @@ class Parser:
             self.advance()
 
     def instructionType(self) -> InstructionType:
-        """Return the type of currently selected instruction"""
+        """Return the type of currently selected instruction
+
+        - A-instructions start with '@'
+        - L-instructions are enclosed in parentheses '()'
+        - C-instructions are all other instructions
+        """
         if self._current_instruction.startswith("@"):
             return self.InstructionType.A_INSTRUCTION
         elif self._current_instruction.startswith(

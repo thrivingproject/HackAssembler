@@ -27,7 +27,7 @@ while parser.has_more_lines():
     if parser.instructionType() is Parser.InstructionType.L_INSTRUCTION:
         label_symbol = parser.symbol()
         if sym_table.contains(label_symbol):
-            raise ValueError(f"Symbol {label_symbol} defined multiple times")
+            raise ValueError(f"Label symbols must be unique.")
         else:
             # Add 1 to get ROM address of next instruction
             sym_table.add_entry(label_symbol, line_no + 1)
