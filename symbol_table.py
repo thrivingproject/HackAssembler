@@ -1,5 +1,5 @@
 class SymbolTable:
-    """Associates symbolic labels to numeric addresses"""
+    """Associate symbols with the decimal value they are bound to."""
 
     def __init__(self) -> None:
         """Initializes symbol table with predefined symbols"""
@@ -29,7 +29,7 @@ class SymbolTable:
             "KBD": 24576,
         }
 
-    def add_entry(self, symbol: str, address: int) -> None:
+    def add_symbol(self, symbol: str, address: int) -> None:
         """Add the pair (symbol, address) to the symbol table"""
         self._dict[symbol] = address
 
@@ -37,6 +37,6 @@ class SymbolTable:
         """Check if the symbol table contains the given symbol"""
         return symbol in self._dict
 
-    def get_address(self, symbol: str) -> int:
-        """Get the address that a symbol corresponds to"""
+    def get_bound_decimal(self, symbol: str) -> int:
+        """Get the decimal value that a symbol is bound to."""
         return self._dict[symbol]

@@ -6,8 +6,10 @@ class Parser:
 
     class InstructionType(Enum):
         A_INSTRUCTION = 1
+        """@xxx, sets A register to constant or the value that variable xxx is bound to, selects RAM and ROM address."""
         C_INSTRUCTION = 2
         L_INSTRUCTION = 3
+        """Label instruction"""
 
     _lines: list[str]
     _index: int
@@ -53,7 +55,10 @@ class Parser:
             return self.InstructionType.C_INSTRUCTION
 
     def symbol(self) -> str:
-        """Returns symbol for L-Instructions and A-Instructions"""
+        """Return symbol for L-Instructions and A-Instructions.
+
+        For A-instructions, xxx is returned, where xxx is either a constant, a variable symbol, or a label symbol.
+        """
         match self.instructionType():
             case self.InstructionType.A_INSTRUCTION:
                 return self._current_instruction[1:]
